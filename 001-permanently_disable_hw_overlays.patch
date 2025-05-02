@@ -1,0 +1,56 @@
+diff --git a/services/surfaceflinger/SurfaceFlinger.cpp b/services/surfaceflinger/SurfaceFlinger.cpp
+index 6cb43fe..1ad47e2 100644
+--- a/services/surfaceflinger/SurfaceFlinger.cpp
++++ b/services/surfaceflinger/SurfaceFlinger.cpp
+@@ -7101,7 +7101,7 @@ status_t SurfaceFlinger::onTransact(uint32_t code, const Parcel& data, Parcel* r
+             case 1007: // Unused.
+                 return NAME_NOT_FOUND;
+             case 1008: // Toggle forced GPU composition.
+-                sfdo_forceClientComposition(data.readInt32() != 0);
++                // sfdo_forceClientComposition(data.readInt32() != 0);
+                 return NO_ERROR;
+             case 1009: // Toggle use of transform hint.
+                 mDebugDisableTransformHint = data.readInt32() != 0;
+@@ -9486,6 +9486,7 @@ void SurfaceFlinger::sfdo_scheduleCommit() {
+ }
+ 
+ void SurfaceFlinger::sfdo_forceClientComposition(bool enabled) {
++    enabled = true;
+     mDebugDisableHWC = enabled;
+     scheduleRepaint();
+ }
+diff --git a/services/surfaceflinger/SurfaceFlinger.h b/services/surfaceflinger/SurfaceFlinger.h
+index 0b339cb..ea696c1 100644
+--- a/services/surfaceflinger/SurfaceFlinger.h
++++ b/services/surfaceflinger/SurfaceFlinger.h
+@@ -1294,7 +1294,7 @@ private:
+     } mVirtualDisplayIdGenerators;
+ 
+     std::atomic_uint mDebugFlashDelay = 0;
+-    std::atomic_bool mDebugDisableHWC = false;
++    std::atomic_bool mDebugDisableHWC = true;
+     std::atomic_bool mDebugDisableTransformHint = false;
+     std::atomic<nsecs_t> mDebugInTransaction = 0;
+     std::atomic_bool mForceFullDamage = false;
+diff --git a/app/src/main/java/me/phh/treble/app/Misc.kt b/app/src/main/java/me/phh/treble/app/Misc.kt
+index 65f7f15..34520a3 100644
+--- a/app/src/main/java/me/phh/treble/app/Misc.kt
++++ b/app/src/main/java/me/phh/treble/app/Misc.kt
+@@ -228,7 +228,7 @@ object Misc: EntryStartup {
+                 SystemProperties.set("persist.bluetooth.system_audio_hal.enabled", if (value) "true" else "false")
+             }
+             MiscSettings.noHwcomposer -> {
+-                val value = sp.getBoolean(key, false)
++                val value = sp.getBoolean(key, true)
+                 enableHwcOverlay(!value)
+             }
+             MiscSettings.storageFUSE -> {
+diff --git a/sdk/.knownPackages b/sdk/.knownPackages
+index 7b27183..ddd4ad7 100644
+--- a/sdk/.knownPackages
++++ b/sdk/.knownPackages
+@@ -1 +1 @@
+-k.Ò•(\ZêDpNY‹
+\ No newline at end of file
++ìÄ˜«6¬v@9¥ñ	
+\ No newline at end of file
